@@ -1,0 +1,12 @@
+diff -ura prank-msa.orig/src/hmmodel.cpp prank-msa/src/hmmodel.cpp
+--- prank-msa.orig/src/hmmodel.cpp	2017-04-01 22:43:52.231300385 -0700
++++ prank-msa/src/hmmodel.cpp	2017-04-01 22:44:18.717826215 -0700
+@@ -1510,7 +1510,7 @@
+     }
+     else
+     {
+-        cout<<"HMModel::alignmentModel: impossible 'as'"<<cout;
++        cout<<"HMModel::alignmentModel: impossible 'as'"<<endl;
+         exit(-1);
+     }
+ 

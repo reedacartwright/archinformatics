@@ -1,0 +1,25 @@
+# Maintainer: Mick Elliot <micke at sfu dot ca>
+# Contributor: Mick Elliot <micke at sfu dot ca>
+
+pkgname=exonerate
+pkgver=2.4.0
+origver=2.4.0
+pkgrel=1
+pkgdesc="A general purpose tool for biological sequence comparison"
+arch=('i686' 'x86_64')
+url="http://ftp.ebi.ac.uk/pub/software/vertebrategenomics/exonerate"
+license=('GPL3')
+depends=('glib2' 'pkgconfig')
+source=($url/$pkgname-$pkgver.tar.gz)
+md5sums=('126fbade003b80b663a1d530c56f1904')
+makedepends=('gcc')
+build() {
+  cd $pkgname-$pkgver
+  ./configure --prefix=/usr
+  make
+}
+
+package() {
+  cd $pkgname-$pkgver
+  make DESTDIR="$pkgdir/" install
+}
