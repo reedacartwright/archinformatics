@@ -36,16 +36,3 @@ diff -ura prank-msa.orig/src/prank.cpp prank-msa/src/prank.cpp
  
  
      if (format!=8 && format!=11 && format!=12 && format!=17 && format!=18 && format!=19)
-Only in prank-msa/src: progressivealignment.o
-Only in prank-msa/src: pwhirschberg.o
-Only in prank-msa/src: pwsite.o
-Only in prank-msa/src: readalignment.o
-Only in prank-msa/src: readfile.o
-Only in prank-msa/src: readnewick.o
-Only in prank-msa/src: sequence.o
-Only in prank-msa/src: site.o
-Only in prank-msa/src: terminalnode.o
-Only in prank-msa/src: terminalsequence.o
-Only in prank-msa/src: translatesequences.o
-Only in prank-msa/src: treenode.o
-Only in prank-msa/src: writefile.o
