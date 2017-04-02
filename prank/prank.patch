@@ -1,6 +1,6 @@
 diff -ura prank-msa.orig/src/hmmodel.cpp prank-msa/src/hmmodel.cpp
 --- prank-msa.orig/src/hmmodel.cpp	2017-04-01 22:43:52.231300385 -0700
-+++ prank-msa/src/hmmodel.cpp	2017-04-01 22:44:18.717826215 -0700
++++ prank-msa/src/hmmodel.cpp	2017-04-02 01:25:10.140240178 -0700
 @@ -1510,7 +1510,7 @@
      }
      else
@@ -10,3 +10,42 @@ diff -ura prank-msa.orig/src/hmmodel.cpp prank-msa/src/hmmodel.cpp
          exit(-1);
      }
  
+diff -ura prank-msa.orig/src/prank.cpp prank-msa/src/prank.cpp
+--- prank-msa.orig/src/prank.cpp	2017-04-01 22:43:52.231300385 -0700
++++ prank-msa/src/prank.cpp	2017-04-02 01:26:06.583563791 -0700
+@@ -24,6 +24,7 @@
+ #include <iostream>
+ #include <string>
+ #include <sstream>
++#include <unistd.h>
+ #include "progressivealignment.h"
+ #include "check_version.h"
+ #include "prank.h"
+@@ -747,8 +748,12 @@
+     // define a seed for random numbers
+     if (rnd_seed>0)
+         srand(rnd_seed);
+-    else
+-        srand(time(0));
++    else {
++        unsigned int v = static_cast<unsigned int>(getpid());
++        v += ((v << 15) + (v >> 3)) + 0x6ba658b3; // Spread 5-decimal PID over 32-bit number
++        v += static_cast<unsigned int>(time(NULL));
++        srand(v);
++    }
+ 
+ 
+     if (format!=8 && format!=11 && format!=12 && format!=17 && format!=18 && format!=19)
+Only in prank-msa/src: progressivealignment.o
+Only in prank-msa/src: pwhirschberg.o
+Only in prank-msa/src: pwsite.o
+Only in prank-msa/src: readalignment.o
+Only in prank-msa/src: readfile.o
+Only in prank-msa/src: readnewick.o
+Only in prank-msa/src: sequence.o
+Only in prank-msa/src: site.o
+Only in prank-msa/src: terminalnode.o
+Only in prank-msa/src: terminalsequence.o
+Only in prank-msa/src: translatesequences.o
+Only in prank-msa/src: treenode.o
+Only in prank-msa/src: writefile.o
