@@ -1,6 +1,6 @@
 diff -ura prank-msa.orig/src/hmmodel.cpp prank-msa/src/hmmodel.cpp
 --- prank-msa.orig/src/hmmodel.cpp	2017-04-01 22:43:52.231300385 -0700
-+++ prank-msa/src/hmmodel.cpp	2017-04-02 01:25:10.140240178 -0700
++++ prank-msa/src/hmmodel.cpp	2017-04-02 01:26:52.533545045 -0700
 @@ -1510,7 +1510,7 @@
      }
      else
@@ -10,9 +10,23 @@ diff -ura prank-msa.orig/src/hmmodel.cpp prank-msa/src/hmmodel.cpp
          exit(-1);
      }
  
+diff -ura prank-msa.orig/src/Makefile prank-msa/src/Makefile
+--- prank-msa.orig/src/Makefile	2017-04-01 22:43:52.231300385 -0700
++++ prank-msa/src/Makefile	2017-04-02 18:56:14.915673637 -0700
+@@ -7,8 +7,8 @@
+ CC            = gcc
+ CXX           = g++
+ DEFINES       = 
+-CFLAGS        = -m64 -pipe -O3 $(DEFINES)
+-CXXFLAGS      = -m64 -pipe -O3 $(DEFINES)
++CFLAGS        = -m64 -pipe -g -O2 $(DEFINES)
++CXXFLAGS      = -m64 -pipe -g -O2 $(DEFINES)
+ INCPATH       = -I. -I/usr/include
+ LINK          = g++
+ LFLAGS        = -m64
 diff -ura prank-msa.orig/src/prank.cpp prank-msa/src/prank.cpp
 --- prank-msa.orig/src/prank.cpp	2017-04-01 22:43:52.231300385 -0700
-+++ prank-msa/src/prank.cpp	2017-04-02 01:26:06.583563791 -0700
++++ prank-msa/src/prank.cpp	2017-04-02 01:26:52.533545045 -0700
 @@ -24,6 +24,7 @@
  #include <iostream>
  #include <string>
