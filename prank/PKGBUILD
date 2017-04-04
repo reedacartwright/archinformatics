@@ -9,7 +9,8 @@ optdepends=('mafft: for initial alignment' 'exonerate: for alignment anchoring')
 source=('http://wasabiapp.org/download/prank/prank.source.150803.tgz'
         'prank.patch')
 md5sums=('71ac2659e91c385c96473712c0a23e8a'
-         'a95446bec7d2e78d3604ff0f03249302')
+         'a93171a65b24b30448af5cbf1923d145')
+options=('!strip')
 
 prepare() {
   cd $pkgname-msa
