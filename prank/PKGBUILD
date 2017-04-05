@@ -1,3 +1,4 @@
+# Maintainer: Reed A. Cartwright <reed@cartwrig.ht>
 pkgname=prank
 pkgver=150803
 pkgrel=4
@@ -7,11 +8,18 @@ arch=('i686' 'x86_64')
 url="http://wasabiapp.org/software/prank/"
 license=('custom')
 optdepends=('mafft: for initial alignment' 'exonerate: for alignment anchoring')
-source=("https://github.com/reedacartwright/prank-msa/archive/${pkgsha1}.zip")
-md5sums=('a5b23ac18743c771f7de5e58f0e57247')
-options=('!strip')
+source=("https://github.com/reedacartwright/prank-msa/archive/${pkgsha1}.zip"
+        "prank.patch")
+md5sums=('a5b23ac18743c771f7de5e58f0e57247'
+         'a02d36c790f2448a4affa7f3ee5f1a20')
+#options=('!strip')
 
 dir="$pkgname-msa-${pkgsha1}"
+
+prepare() {
+  cd $dir
+  patch -Np1 -i "${srcdir}/prank.patch"
+}
 
 build() {
   cd "$dir/src"

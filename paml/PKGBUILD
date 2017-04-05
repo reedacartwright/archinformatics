@@ -1,0 +1,20 @@
+# Maintainer: Reed A. Cartwright <reed@cartwrig.ht>
+pkgname=paml
+pkgver='4.9c'
+pkgrel=1
+pkgdesc="Phylogenetic Analysis by Maximum Likelihood"
+arch=('i686' 'x86_64')
+url="http://abacus.gene.ucl.ac.uk/software/paml.html"
+license=('custom')
+source=("http://abacus.gene.ucl.ac.uk/software/paml4.9c.tgz")
+md5sums=('b5f0fb286fa8e54244cddee1c6fb4555')
+
+build() {
+	cd "$pkgname$pkgver/src"
+	make
+}
+
+package() {
+	cd "$pkgname$pkgver/src"
+	install -D -t "$pkgdir/usr/bin" baseml codeml basemlg mcmctree pamp evolver yn00 chi2
+}
