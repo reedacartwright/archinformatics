@@ -1,13 +1,13 @@
 # Maintainer: Reed A. Cartwright <reed@cartwrig.ht>
 pkgname=paml
-pkgver='4.9c'
+pkgver='4.9e'
 pkgrel=1
 pkgdesc="Phylogenetic Analysis by Maximum Likelihood"
 arch=('i686' 'x86_64')
 url="http://abacus.gene.ucl.ac.uk/software/paml.html"
 license=('custom')
-source=("http://abacus.gene.ucl.ac.uk/software/paml4.9c.tgz")
-md5sums=('b5f0fb286fa8e54244cddee1c6fb4555')
+source=("http://abacus.gene.ucl.ac.uk/software/$pkgname$pkgver.tgz")
+md5sums=('27930055f729f16f84ceb44c0f1581b9')
 
 build() {
 	cd "$pkgname$pkgver/src"
