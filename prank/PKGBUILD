@@ -1,29 +1,25 @@
 pkgname=prank
 pkgver=150803
-pkgrel=3
-pkgdesc="A probabilistic multiple alignment program for DNA, codon and amino-acid sequences."
+pkgrel=4
+pkgsha1=24c07135e377afc8e0606db64ba3446347fe5919
+pkgdesc="A probabilistic multiple alignment program for DNA, codon and amino-acid sequences. [patched]"
 arch=('i686' 'x86_64')
 url="http://wasabiapp.org/software/prank/"
 license=('custom')
 optdepends=('mafft: for initial alignment' 'exonerate: for alignment anchoring')
-source=('http://wasabiapp.org/download/prank/prank.source.150803.tgz'
-        'prank.patch')
-md5sums=('71ac2659e91c385c96473712c0a23e8a'
-         'a93171a65b24b30448af5cbf1923d145')
+source=("https://github.com/reedacartwright/prank-msa/archive/${pkgsha1}.zip")
+md5sums=('a5b23ac18743c771f7de5e58f0e57247')
 options=('!strip')
 
-prepare() {
-  cd $pkgname-msa
-  patch -Np1 -i "${srcdir}/prank.patch"
-}
+dir="$pkgname-msa-${pkgsha1}"
 
 build() {
-  cd "$pkgname-msa/src"
+  cd "$dir/src"
   make
 }
 
 package() {
-  cd "$pkgname-msa/src"
+  cd "$dir/src"
   install -m 755 -D -t "$pkgdir/usr/bin/" prank
   install -m 644 -D -t "$pkgdir/usr/share/man/man1/" prank.1
 }
