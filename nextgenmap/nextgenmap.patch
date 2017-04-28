@@ -1,0 +1,315 @@
+diff -waur NextGenMap-0.5.3/CMakeLists.txt /home/reed/ExtProjects/NextGenMap-0.5.3/CMakeLists.txt
+--- NextGenMap-0.5.3/CMakeLists.txt	2017-01-15 07:15:45.000000000 -0700
++++ /home/reed/ExtProjects/NextGenMap-0.5.3/CMakeLists.txt	2017-04-27 17:20:45.990507386 -0700
+@@ -13,7 +13,7 @@
+ 
+ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules/")
+ 
+-set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin/ngm-${NGM_VERSION_MAJOR}.${NGM_VERSION_MINOR}.${NGM_VERSION_BUILD}/)
++set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
+ file(MAKE_DIRECTORY ${EXECUTABLE_OUTPUT_PATH})
+ 
+ #add_definitions(-D INSTANCE_COUNTING)
+@@ -38,97 +38,14 @@
+   SET(CMAKE_BUILD_TYPE Release)
+ ENDIF(NOT CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE)
+ 
+-IF(NOT APPLE)
+-	SET (CMAKE_CXX_FLAGS_RELEASE "-L${EXECUTABLE_OUTPUT_PATH}/opencl/lib")
+-	SET (CMAKE_CXX_FLAGS_DEBUG "-L${EXECUTABLE_OUTPUT_PATH}/opencl/lib")
+-endif()
++find_package(Threads)
++find_package(ZLIB)
+ 
+-
+-
+-IF(NOT APPLE)
+-	add_subdirectory(opencl-sdk)
+-endif()
+-
+-IF(APPLE)
+-  set(GDB "ggdb")
+-  set(OPENCL_LIBRARIES "-framework OpenCL")
+-ELSE()
+-  set(GDB "gdb")
+-  set(OPENCL_LIBRARIES "-lOpenCL")
+-ENDIF()
+-
+-include_directories("${CMAKE_CURRENT_BINARY_DIR}/lib/zlib-1.2.7")
+-include_directories("${PROJECT_SOURCE_DIR}/lib/zlib-1.2.7")
+-
+-add_subdirectory(lib/zlib-1.2.7)
+-add_subdirectory(lib/bamtools-2.3.0)
+-
+-IF(NOT APPLE)
+-	include_directories("${CMAKE_CURRENT_BINARY_DIR}/opencl-sdk/AMD-APP-SDK-v2.8.1.0-RC-lnx64/include")
+-endif()
++# bamtools
++find_path(BAMTOOLS_INCLUDE_DIR NAMES shared/bamtools_global.h PATH_SUFFIXES include/bamtools)
++find_library(BAMTOOLS_LIBRARY NAMES bamtools PATH_SUFFIXES lib)
+ 
+ add_subdirectory(lib/mason/opencl)
+ add_subdirectory(src)
+ 
+ add_subdirectory(utils)
+-
+-
+-#Writing wrapper scripts for NextGenMape: ngm, ngm-debug, ngm-log
+-
+-file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/ngm" "#!/bin/bash
+-
+-pushd . > /dev/null
+-SCRIPT_PATH=\"\${BASH_SOURCE[0]}\";
+-  while([ -h \"\${SCRIPT_PATH}\" ]) do
+-    cd \"`dirname \"\${SCRIPT_PATH}\"`\"
+-    SCRIPT_PATH=\"$(readlink \"`basename \"\${SCRIPT_PATH}\"`\")\";
+-  done
+-cd \"`dirname \"\${SCRIPT_PATH}\"`\" > /dev/null
+-SCRIPT_PATH=\"`pwd`\";
+-popd  > /dev/null
+-#echo \"srcipt=[\${SCRIPT_PATH}]\"
+-#echo \"pwd   =[`pwd`]\"
+-
+-
+-OPENCL_VENDOR_PATH=\"$SCRIPT_PATH/opencl/vendor\" LD_LIBRARY_PATH=\"$SCRIPT_PATH/opencl/lib\" exec $SCRIPT_PATH/ngm-core $@
+-")
+-
+-file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/ngm-log" "#!/bin/bash
+-
+-pushd . > /dev/null
+-SCRIPT_PATH=\"\${BASH_SOURCE[0]}\";
+-  while([ -h \"\${SCRIPT_PATH}\" ]) do
+-    cd \"`dirname \"\${SCRIPT_PATH}\"`\"
+-    SCRIPT_PATH=\"$(readlink \"`basename \"\${SCRIPT_PATH}\"`\")\";
+-  done
+-cd \"`dirname \"\${SCRIPT_PATH}\"`\" > /dev/null
+-SCRIPT_PATH=\"`pwd`\";
+-popd  > /dev/null
+-#echo \"srcipt=[\${SCRIPT_PATH}]\"
+-#echo \"pwd   =[`pwd`]\"
+-
+-
+-OPENCL_VENDOR_PATH=\"$SCRIPT_PATH/opencl/vendor\" LD_LIBRARY_PATH=\"$SCRIPT_PATH/opencl/lib\" exec $SCRIPT_PATH/ngm-core-debug $@
+-")
+-
+-file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/ngm-debug" "#!/bin/bash
+-
+-pushd . > /dev/null
+-SCRIPT_PATH=\"\${BASH_SOURCE[0]}\";
+-  while([ -h \"\${SCRIPT_PATH}\" ]) do
+-    cd \"`dirname \"\${SCRIPT_PATH}\"`\"
+-    SCRIPT_PATH=\"$(readlink \"`basename \"\${SCRIPT_PATH}\"`\")\";
+-  done
+-cd \"`dirname \"\${SCRIPT_PATH}\"`\" > /dev/null
+-SCRIPT_PATH=\"`pwd`\";
+-popd  > /dev/null
+-#echo \"srcipt=[\${SCRIPT_PATH}]\"
+-#echo \"pwd   =[`pwd`]\"
+-
+-
+-OPENCL_VENDOR_PATH=\"$SCRIPT_PATH/opencl/vendor\" LD_LIBRARY_PATH=\"$SCRIPT_PATH/opencl/lib\" exec ${GDB} --args $SCRIPT_PATH/ngm-core-debug $@
+-")
+-
+-file(COPY "${CMAKE_CURRENT_BINARY_DIR}/ngm-debug" DESTINATION "${EXECUTABLE_OUTPUT_PATH}" FILE_PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ GROUP_EXECUTE GROUP_READ NO_SOURCE_PERMISSIONS)
+-file(COPY "${CMAKE_CURRENT_BINARY_DIR}/ngm" DESTINATION "${EXECUTABLE_OUTPUT_PATH}" FILE_PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ GROUP_EXECUTE GROUP_READ NO_SOURCE_PERMISSIONS)
+-file(COPY "${CMAKE_CURRENT_BINARY_DIR}/ngm-log" DESTINATION "${EXECUTABLE_OUTPUT_PATH}" FILE_PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ GROUP_EXECUTE GROUP_READ NO_SOURCE_PERMISSIONS)
+diff -waur NextGenMap-0.5.3/lib/mason/opencl/CMakeLists.txt /home/reed/ExtProjects/NextGenMap-0.5.3/lib/mason/opencl/CMakeLists.txt
+--- NextGenMap-0.5.3/lib/mason/opencl/CMakeLists.txt	2017-01-15 07:15:45.000000000 -0700
++++ /home/reed/ExtProjects/NextGenMap-0.5.3/lib/mason/opencl/CMakeLists.txt	2017-04-27 16:13:16.240840953 -0700
+@@ -2,6 +2,8 @@
+ 
+ ADD_EXECUTABLE(oclTool tools/oclTool.cpp)
+ 
++find_package(OpenCL)
++
+ IF(${CMAKE_MAJOR_VERSION} GREATER 2)
+ 	ADD_CUSTOM_COMMAND(
+ 	   OUTPUT ${PROJECT_BINARY_DIR}/oclDefines.h
+@@ -89,25 +91,27 @@
+ 
+ SET_TARGET_PROPERTIES(MASonOpenCl PROPERTIES COMPILE_FLAGS "-g -O3 -DNDEBUG")
+ 
+-IF(APPLE)
+-  target_link_libraries(MASonOpenCl "${OPENCL_LIBRARIES}")
+-ELSE()
+-  target_link_libraries(MASonOpenCl "-Wl,-Bdynamic ${OPENCL_LIBRARIES}")
+-ENDIF()
++if (OpenCL_FOUND)
++  include_directories(${OpenCL_INCLUDE_DIRS})
+ 
+-add_library(MASonOpenCl-debug    STATIC ${PROJECT_BINARY_DIR}/oclDefines.h 
+-              ${PROJECT_BINARY_DIR}/oclSwScore.h
+-              ${PROJECT_BINARY_DIR}/oclEndFreeScore.h
+-              ${PROJECT_BINARY_DIR}/oclSwAlignment.h							
+-              ${PROJECT_BINARY_DIR}/oclSwCigar.h
+-              OclHost.cpp SWOcl.cpp SWOclAlignment.cpp SWOclCigar.cpp Timer.cpp)	
++  target_link_libraries(MASonOpenCl "${OpenCL_LIBRARIES}")
++endif()
+ 
+-set_target_properties(MASonOpenCl-debug PROPERTIES COMPILE_DEFINITIONS "DEBUGLOG")
+ 
+-SET_TARGET_PROPERTIES(MASonOpenCl-debug PROPERTIES COMPILE_FLAGS "-g3 -O0")
+ 
+-IF(APPLE)
+-  target_link_libraries(MASonOpenCl-debug "${OPENCL_LIBRARIES}")
+-ELSE()
+-  target_link_libraries(MASonOpenCl-debug "-Wl,-Bdynamic ${OPENCL_LIBRARIES}")
+-ENDIF()
++# add_library(MASonOpenCl-debug    STATIC ${PROJECT_BINARY_DIR}/oclDefines.h 
++#               ${PROJECT_BINARY_DIR}/oclSwScore.h
++#               ${PROJECT_BINARY_DIR}/oclEndFreeScore.h
++#               ${PROJECT_BINARY_DIR}/oclSwAlignment.h              
++#               ${PROJECT_BINARY_DIR}/oclSwCigar.h
++#               OclHost.cpp SWOcl.cpp SWOclAlignment.cpp SWOclCigar.cpp Timer.cpp)  
++
++# set_target_properties(MASonOpenCl-debug PROPERTIES COMPILE_DEFINITIONS "DEBUGLOG")
++
++# SET_TARGET_PROPERTIES(MASonOpenCl-debug PROPERTIES COMPILE_FLAGS "-g3 -O0")
++
++# IF(APPLE)
++#   target_link_libraries(MASonOpenCl-debug "${OPENCL_LIBRARIES}")
++# ELSE()
++#   target_link_libraries(MASonOpenCl-debug "-Wl,-Bdynamic ${OPENCL_LIBRARIES}")
++# ENDIF()
+diff -waur NextGenMap-0.5.3/src/CMakeLists.txt /home/reed/ExtProjects/NextGenMap-0.5.3/src/CMakeLists.txt
+--- NextGenMap-0.5.3/src/CMakeLists.txt	2017-01-15 07:15:45.000000000 -0700
++++ /home/reed/ExtProjects/NextGenMap-0.5.3/src/CMakeLists.txt	2017-04-27 17:05:51.626184877 -0700
+@@ -2,8 +2,6 @@
+ project(NextGenMap)
+ 
+ include_directories (../lib/seqan-library-1.4.1/include)
+-#include_directories (../lib/bamtools-2.3.0/src/api)
+-include_directories (../lib/bamtools-2.3.0/src)
+ include_directories (../lib/mason/opencl)
+ include_directories (../include)
+ include_directories (parser)
+@@ -13,6 +11,7 @@
+ include_directories (log)
+ include_directories (config)
+ include_directories (.)
++include_directories(${BAMTOOLS_INCLUDE_DIR})
+ 
+ configure_file( Version.h.in ${CMAKE_SOURCE_DIR}/src/Version.h )
+ 
+@@ -47,55 +46,12 @@
+ 					
+ ADD_CUSTOM_TARGET(recompile_always ALL touch "${CMAKE_SOURCE_DIR}/src/NGM_main.cpp")
+ 
+-SET_TARGET_PROPERTIES(ngm-core PROPERTIES COMPILE_FLAGS "-g -O3 -DNDEBUG")
++#SET_TARGET_PROPERTIES(ngm-core PROPERTIES COMPILE_FLAGS "-g -O3 -DNDEBUG")
+ 
+-target_link_libraries(ngm-core pthread)
++target_link_libraries(ngm-core Threads::Threads)
+ target_link_libraries(ngm-core MASonOpenCl)	
+-TARGET_LINK_LIBRARIES(ngm-core BamTools-static)
+-TARGET_LINK_LIBRARIES(ngm-core zlibstatic)
+-#target_link_libraries(ngm-core "-lz")
+-	
+-add_definitions(-D _BAM) 
+-
+-
+-add_executable(ngm-core-debug	
+-					parser/BamParser.cpp
+-					writer/BAMWriter.cpp
+-					parser/VcfParser.cpp																		
+-					config/Config.cpp					
+-					CS.cpp					
+-					CSstatic.cpp
+-					misc/Debug.cpp													
+-					log/Logging.cpp
+-					MappedRead.cpp
+-					NGM_main.cpp
+-					NGM.cpp
+-					UpdateCheck.cpp
+-					core/NGMTask.cpp
+-					AlignmentBuffer.cpp
+-					PrefixTable.cpp														
+-					ReadProvider.cpp
+-					parser/SamParser.cpp
+-					writer/SAMWriter.cpp
+-					writer/ScoreWriter.cpp
+-					seqan/EndToEndAffine.cpp
+-					SequenceProvider.cpp	
+-					OutputReadBuffer.cpp				
+-					ScoreBuffer.cpp
+-					core/unix.cpp
+-					core/unix_threads.cpp
+-					core/windows_threads.cpp
+-					core/windows.cpp)
+-
++TARGET_LINK_LIBRARIES(ngm-core ${BAMTOOLS_LIBRARY})
++TARGET_LINK_LIBRARIES(ngm-core ZLIB::ZLIB)
+ 
+ 
+-set_target_properties(ngm-core-debug PROPERTIES COMPILE_DEFINITIONS "DEBUGLOG")
+-
+-SET_TARGET_PROPERTIES(ngm-core-debug PROPERTIES COMPILE_FLAGS "-g3 -O0")
+-
+-target_link_libraries(ngm-core-debug pthread)
+-target_link_libraries(ngm-core-debug MASonOpenCl-debug)	
+-TARGET_LINK_LIBRARIES(ngm-core-debug BamTools-static)
+-TARGET_LINK_LIBRARIES(ngm-core-debug zlibstatic)
+-#target_link_libraries(ngm-core-debug "-lz")
+-
++add_definitions(-D _BAM) 
+diff -waur NextGenMap-0.5.3/utils/CMakeLists.txt /home/reed/ExtProjects/NextGenMap-0.5.3/utils/CMakeLists.txt
+--- NextGenMap-0.5.3/utils/CMakeLists.txt	2017-01-15 07:15:45.000000000 -0700
++++ /home/reed/ExtProjects/NextGenMap-0.5.3/utils/CMakeLists.txt	2017-04-27 17:07:01.467035289 -0700
+@@ -2,7 +2,6 @@
+ 
+ include_directories (../include)
+ include_directories (../src)
+-include_directories (../lib/bamtools-2.3.0/src)
+ include_directories (../src/parser)
+ include_directories (../src/writer)
+ include_directories (../src/misc)
+@@ -11,6 +10,7 @@
+ include_directories (../src/config)
+ include_directories (writer)
+ include_directories (paired)
++include_directories(${BAMTOOLS_INCLUDE_DIR})
+ 
+ 
+ include_directories (.)
+@@ -34,38 +34,12 @@
+ 								../src/CSstatic.cpp
+  					)		
+  
+- add_executable(ngm-utils-debug main.cpp
+-								reformat_fasta/reformat_fasta.cpp
+-								cout_reads/cout-reads.cpp
+-								kmers/kmer-distribution.cpp
+-								paired/interleave-pairs.cpp
+-								writer/Writer.cpp								
+-								../src/parser/SamParser.cpp
+-								../src/parser/BamParser.cpp
+-								../src/log/Logging.cpp
+-								../src/core/unix.cpp
+-								../src/core/unix_threads.cpp
+-								../src/MappedRead.cpp
+-								../src/SequenceProvider.cpp
+-								../src/config/Config.cpp
+-								../src/PrefixTable.cpp
+-								../src/parser/VcfParser.cpp
+-								../src/CSstatic.cpp
+- 					)
+-
+ SET_TARGET_PROPERTIES(ngm-utils PROPERTIES COMPILE_FLAGS "-g -O3 -DNDEBUG")
+ 
+-SET_TARGET_PROPERTIES(ngm-utils-debug PROPERTIES COMPILE_FLAGS "-g3 -O0")
+-
+ add_definitions(-D _BAM)
+ 
+-TARGET_LINK_LIBRARIES(ngm-utils pthread)
+-TARGET_LINK_LIBRARIES(ngm-utils-debug pthread)
++TARGET_LINK_LIBRARIES(ngm-utils Threads::Threads)
+ 
+-TARGET_LINK_LIBRARIES(ngm-utils BamTools-static)
+-TARGET_LINK_LIBRARIES(ngm-utils-debug BamTools-static)
++TARGET_LINK_LIBRARIES(ngm-utils ${BAMTOOLS_LIBRARY})
+ 
+-TARGET_LINK_LIBRARIES(ngm-utils zlibstatic)
+-#TARGET_LINK_LIBRARIES(ngm-utils "-lz")
+-TARGET_LINK_LIBRARIES(ngm-utils-debug zlibstatic)
+-#TARGET_LINK_LIBRARIES(ngm-utils-debug "-lz")
++TARGET_LINK_LIBRARIES(ngm-utils ZLIB::ZLIB)

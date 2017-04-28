@@ -1,0 +1,40 @@
+# Maintainer: Reed A. Cartwright <reed@cartwrig.ht>
+pkgname=nextgenmap
+ngmname=NextGenMap
+pkgver=0.5.3
+pkgrel=1
+pkgdesc="A flexible highly sensitive short read mapping tool that handles much higher mismatch rates than comparable algorithms."
+arch=('x86_64')
+depends=('ocl-icd' 'bamtools')
+makedepends=('opencl-headers')
+url="https://github.com/Cibiv/${pkgname}/wiki"
+license=('PerlArtistic')
+source=("${ngmname}-${pkgver}.tgz::https://github.com/Cibiv/${ngmname}/archive/v0.5.3.tar.gz"
+        "nextgenmap.patch")
+md5sums=('6416f0e581338266f0520bbbaeb3a20c'
+         'e3d5858b03e548bcff768eb3d5751e82')
+
+prepare() {
+	cd "${srcdir}/${ngmname}-${pkgver}"
+
+ 	patch -Np1 -i "${srcdir}/nextgenmap.patch"
+	mkdir -p build
+}
+
+build() {
+  cd "${srcdir}/${ngmname}-${pkgver}/build"
+
+  cmake \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_INSTALL_PREFIX=/usr \
+    ..
+
+  make
+}
+
+package() {
+  cd "${srcdir}/${ngmname}-${pkgver}"
+
+  install -m755 -d "${pkgdir}/usr/bin"
+  install -m755 "${srcdir}/${ngmname}-${pkgver}/build/bin/ngm-core" "${pkgdir}/usr/bin/ngm"
+}
