@@ -1,0 +1,17 @@
+# Maintainer: Reed A. Cartwright <reed@cartwrig.ht>
+pkgname=gatk
+pkgver=3.7
+pkgrel=1
+pkgdesc="Genome Analysis Toolkit"
+arch=('any')
+url="https://software.broadinstitute.org/gatk/"
+license=('custom')
+source=("GenomeAnalysisTK-3.7.tar.bz2" "gatk.sh")
+md5sums=('11c4d69a2fbb0043a88cf5b9a35fac97'
+         '8a0bd3c67fc4670b36d28bc383dc883b')
+depends=('bash' 'java-runtime>=8')
+
+package() {
+	install -Dm755 $srcdir/GenomeAnalysisTK.jar $pkgdir/usr/share/java/gatk/GenomeAnalysisTK.jar
+	install -Dm755 $srcdir/gatk.sh $pkgdir/usr/bin/gatk
+}
