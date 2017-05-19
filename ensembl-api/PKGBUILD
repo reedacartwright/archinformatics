@@ -1,0 +1,39 @@
+# Maintainer: Reed A. Cartwright <reed@cartwrig.ht>
+pkgname=perl-bio-ensembl
+pkgver=88
+pkgrel=1
+pkgdesc="The Ensembl Perl API and SQL schema"
+arch=('any')
+url="http://www.ensembl.org/"
+license=('Apache2')
+groups=()
+depends=('perl>=5.10.0')
+makedepends=()
+provides=()
+conflicts=()
+replaces=()
+backup=()
+options=(!emptydirs)
+install=
+source=(ensembl-release-$pkgver.tar.gz::https://github.com/Ensembl/ensembl/archive/release/$pkgver.tar.gz
+        ensembl-compara-release-$pkgver.tar.gz::https://github.com/Ensembl/ensembl-compara/archive/release/$pkgver.tar.gz
+        ensembl-funcgen-release-$pkgver.tar.gz::https://github.com/Ensembl/ensembl-funcgen/archive/release/$pkgver.tar.gz
+        ensembl-variation-release-$pkgver.tar.gz::https://github.com/Ensembl/ensembl-variation/archive/release/$pkgver.tar.gz
+        ensembl-io-release-$pkgver.tar.gz::https://github.com/Ensembl/ensembl-io/archive/release/$pkgver.tar.gz
+)
+md5sums=('c822d866ace001c36834eabc96670db2'
+         'fc3a97654ce65e84180d36005aabb057'
+         '0c9992b67317aa7ad2e95332f8a9454a'
+         '5304a0252a00621ac1580008e5a89489'
+         '0bc40246a39b819c549585f8e6cdb66c')
+
+package() {
+  install -m755 -d "$pkgdir/usr/lib/perl5/vendor_perl/" 
+
+  for api in "" compara- funcgen- variation- io-; do 
+    cd "$srcdir/ensembl-${api}release-$pkgver/modules"
+    cp -R Bio/ "$pkgdir/usr/lib/perl5/vendor_perl/"
+  done
+}
+
+# vim:set ts=2 sw=2 et:
