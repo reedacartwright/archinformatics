@@ -1,13 +1,13 @@
 # Maintainer: Reed A. Cartwright <reed@cartwrig.ht>
 pkgname=perl-bio-ensembl
 pkgver=88
-pkgrel=1
+pkgrel=2
 pkgdesc="The Ensembl Perl API and SQL schema"
 arch=('any')
 url="http://www.ensembl.org/"
 license=('Apache2')
 groups=()
-depends=('perl>=5.10.0')
+depends=('perl>=5.10.0') #'perl-bioperl>=1.006001'
 makedepends=()
 provides=()
 conflicts=()
@@ -28,11 +28,11 @@ md5sums=('c822d866ace001c36834eabc96670db2'
          '0bc40246a39b819c549585f8e6cdb66c')
 
 package() {
-  install -m755 -d "$pkgdir/usr/lib/perl5/vendor_perl/" 
+  install -m755 -d "$pkgdir/usr/share/perl5/vendor_perl/" 
 
   for api in "" compara- funcgen- variation- io-; do 
     cd "$srcdir/ensembl-${api}release-$pkgver/modules"
-    cp -R Bio/ "$pkgdir/usr/lib/perl5/vendor_perl/"
+    cp -R Bio/ "$pkgdir/usr/share/perl5/vendor_perl/"
   done
 }
 
