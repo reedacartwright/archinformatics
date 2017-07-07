@@ -7,7 +7,7 @@ arch=('i686' 'x86_64')
 url="http://abacus.gene.ucl.ac.uk/software/paml.html"
 license=('custom')
 source=("http://abacus.gene.ucl.ac.uk/software/$pkgname$pkgver.tgz")
-md5sums=('27930055f729f16f84ceb44c0f1581b9')
+md5sums=('ac5a062bfea1f4eaac79008434030acf')
 
 build() {
 	cd "$pkgname$pkgver/src"

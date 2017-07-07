@@ -22,9 +22,9 @@ source=(ensembl-release-$pkgver.tar.gz::https://github.com/Ensembl/ensembl/archi
         ensembl-io-release-$pkgver.tar.gz::https://github.com/Ensembl/ensembl-io/archive/release/$pkgver.tar.gz
 )
 md5sums=('c822d866ace001c36834eabc96670db2'
-         'fc3a97654ce65e84180d36005aabb057'
+         'e6fd79d73885361242142e8ecae4b858'
          '0c9992b67317aa7ad2e95332f8a9454a'
-         '5304a0252a00621ac1580008e5a89489'
+         '7246c771b755257df321abbffa906b9a'
          '0bc40246a39b819c549585f8e6cdb66c')
 
 package() {
