@@ -1,0 +1,35 @@
+# Maintainer: Reed A. Cartwright <reed@cartwrig.ht>
+pkgname=spades
+_name=SPAdes
+pkgver='3.11.1'
+pkgrel=1
+pkgdesc="St. Petersburg genome assembler"
+arch=('x86_64')
+url="http://cab.spbu.ru/software/spades/"
+license=('GPL2')
+source=("http://cab.spbu.ru/files/release$pkgver/$_name-$pkgver.tar.gz")
+depends=('python')
+makedepends=('cmake')
+md5sums=('478677b560e2f98db025e8efd5245cdf')
+
+prepare() {
+  mkdir -p build
+}
+
+build() {
+  cd "${srcdir}/build"
+
+  cmake \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_INSTALL_PREFIX=/usr \
+    -DSPADES_BOOST_ROOT=/usr \
+    "../$_name-$pkgver/src"
+
+  make
+}
+
+package() {
+  cd "build"
+
+  make DESTDIR="$pkgdir" install
+}
