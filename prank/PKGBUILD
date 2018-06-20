@@ -1,24 +1,21 @@
 # Maintainer: Reed A. Cartwright <reed@cartwrig.ht>
 pkgname=prank
-pkgver=150803
-pkgrel=4
-pkgsha1=24c07135e377afc8e0606db64ba3446347fe5919
+pkgver=170427
+pkgrel=1
+pkgsha1=35cec05f7bf8091017010fb25358f1b2c0a4991b
 pkgdesc="A probabilistic multiple alignment program for DNA, codon and amino-acid sequences. [patched]"
 arch=('i686' 'x86_64')
 url="http://wasabiapp.org/software/prank/"
 license=('custom')
 optdepends=('mafft: for initial alignment' 'exonerate: for alignment anchoring')
-source=("https://github.com/reedacartwright/prank-msa/archive/${pkgsha1}.zip"
-        "prank.patch")
-md5sums=('a5b23ac18743c771f7de5e58f0e57247'
-         'a02d36c790f2448a4affa7f3ee5f1a20')
+source=("https://github.com/reedacartwright/prank-msa/archive/${pkgsha1}.zip")
+md5sums=('5ba4a952e452ac4959e4db23152ccdc9')
 #options=('!strip')
 
 dir="$pkgname-msa-${pkgsha1}"
 
 prepare() {
   cd $dir
-  patch -Np1 -i "${srcdir}/prank.patch"
 }
 
 build() {
